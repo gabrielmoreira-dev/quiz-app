@@ -1,12 +1,8 @@
 import UIKit
 
-final class QuestionViewController: UIViewController {
-    typealias Selection = ([String]) -> Void
-    
-    private let question: String
-    private let options: [String]
-    private let selection: Selection
-    private let reuseIdentifier: String = "Cell"
+final class ResultsViewController: UIViewController {
+    private let summary: String
+    private let answers: [PresentableAnswer]
     
     private(set) lazy var headerLabel: UILabel = {
         let label = UILabel()
@@ -18,6 +14,9 @@ final class QuestionViewController: UIViewController {
         let tableView = UITableView()
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.register(CorrectAnswerCell.self)
+        tableView.register(WrongAnswerCell.self)
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -27,10 +26,9 @@ final class QuestionViewController: UIViewController {
         setupLayout()
     }
     
-    init(question: String, options: [String], selection: @escaping Selection) {
-        self.question = question
-        self.options = options
-        self.selection = selection
+    init(summary: String, answers: [PresentableAnswer] = []) {
+        self.summary = summary
+        self.answers = answers
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -38,42 +36,39 @@ final class QuestionViewController: UIViewController {
     required init?(coder: NSCoder) { nil }
 }
 
-extension QuestionViewController: UITableViewDataSource {
+extension ResultsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        options.count
+        answers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = dequeueCell(in: tableView)
-        cell.textLabel?.text = options[indexPath.row]
-        return cell
+        let answer = answers[indexPath.row]
+        if answer.wrongAnswer == nil {
+            return correctAnswerCell(for: answer)
+        }
+        return wrongAnswerCell(for: answer)
     }
     
-    private func dequeueCell(in tableView: UITableView) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) {
-            return cell
-        }
-        return UITableViewCell(style: .default, reuseIdentifier: reuseIdentifier)
+    private func correctAnswerCell(for answer: PresentableAnswer) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(CorrectAnswerCell.self)
+        cell?.setup(with: answer.question, and: answer.correctAnswer)
+        return cell ?? UITableViewCell()
+    }
+    
+    private func wrongAnswerCell(for answer: PresentableAnswer) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(WrongAnswerCell.self)
+        cell?.setup(with: answer.question, answer.correctAnswer, and: answer.wrongAnswer ?? String())
+        return cell ?? UITableViewCell()
     }
 }
 
-extension QuestionViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selection(getSelectedOptions(in: tableView))
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if tableView.allowsMultipleSelection {
-            selection(getSelectedOptions(in: tableView))
-        }
-    }
-    
-    private func getSelectedOptions(in tableView: UITableView) -> [String] {
-        tableView.indexPathsForSelectedRows?.map { options[$0.row] } ?? []
+extension ResultsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        answers[indexPath.row].wrongAnswer != nil ? 100 : 80
     }
 }
 
-extension QuestionViewController: ViewConfiguration {
+extension ResultsViewController: ViewConfiguration {
     func setupHierarchy() {
         view.addSubview(headerLabel)
         view.addSubview(tableView)
@@ -94,6 +89,6 @@ extension QuestionViewController: ViewConfiguration {
     
     func setupViews() {
         view.backgroundColor = .white
-        headerLabel.text = question
+        headerLabel.text = summary
     }
 }
