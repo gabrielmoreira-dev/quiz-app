@@ -1,0 +1,21 @@
+PODS:
+  - GMQuizEngine (0.0.3)
+
+DEPENDENCIES:
+  - GMQuizEngine (from `https://github.com/gabrielmoreira-dev/quiz-engine.git`)
+
+EXTERNAL SOURCES:
+  GMQuizEngine:
+    :git: https://github.com/gabrielmoreira-dev/quiz-engine.git
+
+CHECKOUT OPTIONS:
+  GMQuizEngine:
+    :commit: 5ef6d11ce54063a8e225fc73342334d115da7d25
+    :git: https://github.com/gabrielmoreira-dev/quiz-engine.git
+
+SPEC CHECKSUMS:
+  GMQuizEngine: d6d3ad968d2a2c73f494a0a7964d271cb4bb6177
+
+PODFILE CHECKSUM: 9672f127270ec9258a84971961063cace362a15f
+
+COCOAPODS: 1.11.3
