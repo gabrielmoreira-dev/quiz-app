@@ -3,8 +3,8 @@ import UIKit
 final class QuestionViewController: UIViewController {
     typealias Selection = ([String]) -> Void
     
-    private let question: String
-    private let options: [String]
+    private(set) var question: String
+    private(set) var options: [String]
     private let selection: Selection
     private let reuseIdentifier: String = "Cell"
     

@@ -10,11 +10,11 @@ final class Router: Routing {
         self.factory = factory
     }
     
-    func routeTo(question: Question<String>, completion: @escaping (String) -> Void) {
+    func routeTo(question: Question<String>, completion: @escaping ([String]) -> Void) {
         show(factory.makeQuestionViewController(for: question, completion: completion))
     }
     
-    func routeTo(result: GameResult<Question<String>, String>) {
+    func routeTo(result: GameResult<Question<String>, [String]>) {
         show(factory.makeResultsViewController(for: result))
     }
 }
