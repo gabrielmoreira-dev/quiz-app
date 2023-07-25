@@ -71,7 +71,3 @@ private final class ViewControllerFactoryStub: ViewControllerFactoring {
         stubbedResults[result] ?? UIViewController()
     }
 }
-
-extension GameResult: Hashable {
-    public func hash(into hasher: inout Hasher) {}
-}
